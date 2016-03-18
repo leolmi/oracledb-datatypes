@@ -19,7 +19,7 @@ $ node-gyp rebuild
 
 # Retrieve Data Types in MetaData #
 
-after changing the `metaData` class exposes items with the property `type` together with the existing `name` (I use [lodash](https://lodash.com/docs)):
+after changing the `metaData` array exposes items with the property `type` together with the existing `name` (I use [lodash](https://lodash.com/docs)):
 ```javascript
 connection.execute(
   "SQL statement",
