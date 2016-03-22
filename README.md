@@ -19,29 +19,45 @@ $ node-gyp rebuild
 
 # Retrieve Data Types in MetaData #
 
-after changing the `metaData` array exposes items with the property `type` together with the existing `name` (I use [lodash](https://lodash.com/docs)):
+after changing the `metaData` array exposes items with more properties:
+
+- `name` : field name
+- `type` : field data type (JS datatype)
+- `originalType` : field data type (DB datatype)
+- `size` : DB field size
+- `precision` : DB field precision
+- `scale` : DB field scale
+- `isNullable` : field can be null
+
 ```javascript
 connection.execute(
-  "SQL statement",
+  "... SQL statement ...",
   [],
   function(err, result)
   {
-    var columns = _.map(result.metaData, function(data){
+    var columns = _.map(result.metaData, function(c)
+    {
       return {
-        fieldName: data.name,
-        dataType: data.type
+        name: c.name || '',
+        type: c.type || '',
+        originalType: c.originalType || 'undefined',
+        size: c.size || 0,
+        precision: c.precision || 0,
+        scale: c.scale || 0,
+        isNullable: c.isNullable
       };
     });
   });
 ```
+(I use [lodash](https://lodash.com/docs)):
+
 
 # Data Types #
-on line `1772` of the file `njsConnection.cpp` you can read data types converter.
+on line `1764` of the file `njsConnection.cpp` you can read data types (JS) converter.
 
-return data types (js style):
+return data types (js datatype):
 - string
 - number
-- integer
 - date
 - object
 

@@ -201,13 +201,11 @@ NAN_GETTER(ResultSet::GetMetaData)
     return;
   }
   std::string *columnNames = new std::string[njsResultSet->numCols_];
-  std::string *columnTypes = new std::string[njsResultSet->numCols_];
-  Connection::CopyMetaData ( columnNames, columnTypes, njsResultSet->meta_,
-                             njsResultSet->numCols_ );
+  FieldInfo *fields = new FieldInfo[njsResultSet->numCols_];
+  Connection::CopyMetaData ( columnNames, fields, njsResultSet->meta_, njsResultSet->numCols_ );
+
   Local<Value> meta;
-  meta = Connection::GetMetaData( columnNames,
-                                  columnTypes,
-                                  njsResultSet->numCols_ );
+  meta = Connection::GetMetaData( fields, njsResultSet->numCols_ );
   info.GetReturnValue().Set(meta);
 }
 
@@ -432,7 +430,7 @@ void ResultSet::Async_GetRows(uv_work_t *req)
 
   try
   {
-    Connection::CopyMetaData ( ebaton->columnNames, ebaton->columnTypes, njsRS->meta_,
+    Connection::CopyMetaData ( ebaton->columnNames, ebaton->fields, njsRS->meta_,
                                njsRS->numCols_ );
     ebaton->numCols      = njsRS->numCols_;
     if( !njsRS->defineBuffers_ ||

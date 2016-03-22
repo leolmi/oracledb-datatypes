@@ -19,9 +19,9 @@
  * This file uses NAN:
  *
  * Copyright (c) 2015 NAN contributors
- *
+ * 
  * NAN contributors listed at https://github.com/rvagg/nan#contributors
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -29,10 +29,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,7 +40,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
+ * 
  * NAME
  *   njsConnection.cpp
  *
@@ -66,7 +66,7 @@ Nan::Persistent<FunctionTemplate> Connection::connectionTemplate_s;
 #define NJS_MAX_FETCH_AS_STRING_SIZE 200
 
 // number of rows prefetched by non-ResultSet queries
-#define NJS_PREFETCH_NON_RESULTSET 2
+#define NJS_PREFETCH_NON_RESULTSET 2 
 
 #define NJS_SIZE_T_MAX std::numeric_limits<std::size_t>::max()
 
@@ -154,7 +154,7 @@ void Connection::Init(Handle<Object> target)
                  Nan::New<v8::String>("oracleServerVersion").ToLocalChecked(),
                  Connection::GetOracleServerVersion,
                  Connection::SetOracleServerVersion );
-
+  
 
   connectionTemplate_s.Reset(tpl);
   Nan::Set(target, Nan::New<v8::String>("Connection").ToLocalChecked(), tpl->GetFunction());
@@ -178,7 +178,7 @@ NAN_METHOD(Connection::New)
    DESCRIPTION
      Abstraction for exception on accessing connection properties
 */
-void Connection::connectionPropertyException(Connection* njsConn,
+void Connection::connectionPropertyException(Connection* njsConn, 
                                              NJSErrorType errType,
                                              string property)
 {
@@ -464,7 +464,7 @@ NAN_METHOD(Connection::Execute)
   executeBaton->outFormat    = connection->oracledb_->getOutFormat();
   executeBaton->autoCommit   = connection->oracledb_->getAutoCommit();
   executeBaton->dpienv       = connection->oracledb_->getDpiEnv();
-  executeBaton->fetchAsStringTypes =
+  executeBaton->fetchAsStringTypes = 
     (DataType*) connection->oracledb_->getFetchAsStringTypes ();
   executeBaton->fetchAsStringTypesCount =
     connection->oracledb_->getFetchAsStringTypesCount ();
@@ -564,7 +564,7 @@ void Connection::ProcessOptions (Nan::NAN_METHOD_ARGS_TYPE args, unsigned int in
       Local<Array> keys = fetchInfo->GetOwnPropertyNames ();
       if ( keys->Length () > 0 )
       {
-        FetchInfo *fInfo = executeBaton->fetchInfo =
+        FetchInfo *fInfo = executeBaton->fetchInfo = 
                            new FetchInfo[keys->Length()];
         executeBaton->fetchInfoCount = keys->Length ();
 
@@ -701,7 +701,7 @@ void Connection::GetBindUnit (Local<Value> val, Bind* bind,
                                            "maxSize", 2 );
       goto exitGetBindUnit;
     }
-
+    
     NJS_GET_UINT_FROM_JSON(bind->maxArraySize, executeBaton->error, bind_unit,
                            "maxArraySize", 1, exitGetBindUnit);
 
@@ -712,27 +712,27 @@ void Connection::GetBindUnit (Local<Value> val, Bind* bind,
     /*
      * For IN binds maxArraySize is ignored and obtained from array size
      * For INOUT bind, we do need maxArraySize to be specified by application
-     * For OUT bind, we can NOT determine the out value as ARRAY and so
+     * For OUT bind, we can NOT determine the out value as ARRAY and so 
      * no validation done here.
      */
     if ( element->IsArray () )
     {
       Local<Array>arr = Local<Array>::Cast (element);
-
+      
       if ( dir == BIND_INOUT && ( arr->Length() > bind->maxArraySize ) )
       {
         executeBaton->error = NJSMessages::getErrorMsg ( errInvalidArraySize );
         goto exitGetBindUnit;
       }
 
-      /* For IN bind, empty array is not allowed */
+      /* For IN bind, empty array is not allowed */      
       if ( ( dir == BIND_IN || dir == BIND_INOUT ) && ( arr->Length () == 0 ) )
       {
         executeBaton->error = NJSMessages::getErrorMsg ( errEmptyArray ) ;
         goto exitGetBindUnit;
       }
     }
-
+    
     /* REFCURSOR(s) are supported only as OUT Binds now */
     if ( bind->type == DATA_CURSOR && dir != BIND_OUT )
     {
@@ -741,7 +741,7 @@ void Connection::GetBindUnit (Local<Value> val, Bind* bind,
                                             "type", 2 ) ;
       goto exitGetBindUnit;
     }
-
+    
     switch(dir)
     {
       case BIND_IN    :
@@ -812,7 +812,7 @@ void Connection::GetOutBindParams (unsigned short dataType, Bind* bind,
       bind->isArray = true;
     }
   }
-
+  
   switch(dataType)
   {
     case DATA_STR :
@@ -835,12 +835,12 @@ void Connection::GetOutBindParams (unsigned short dataType, Bind* bind,
     case DATA_BUFFER :
       bind->type     = dpi::DpiRaw;
       break;
-
-    case DATA_CLOB :
+      
+    case DATA_CLOB : 
       bind->type    = dpi::DpiClob;
       break;
 
-    case DATA_BLOB :
+    case DATA_BLOB : 
       bind->type    = dpi::DpiBlob;
       break;
 
@@ -849,7 +849,7 @@ void Connection::GetOutBindParams (unsigned short dataType, Bind* bind,
       break;
   }
 
-  executeBaton->binds.push_back(bind);
+  executeBaton->binds.push_back(bind);       
 
 exitGetOutBindParams:
   ;
@@ -895,7 +895,7 @@ void Connection::GetInBindParams(Local<Value> v8val, Bind* bind,
      For IN Bind only len field field is used, and for only a scalar value now,
      allocate for one unit.
 */
-void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
+void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind, 
                                        eBaton* executeBaton, BindType type)
 {
   Nan::HandleScope scope;
@@ -906,7 +906,7 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
   bind->len = (DPI_BUFLEN_TYPE *)malloc ( sizeof ( DPI_BUFLEN_TYPE ) );
 
   *(bind->ind)  = 0;
-
+  
   dataType = Connection::GetValueType ( v8val );
 
   switch ( dataType )
@@ -954,7 +954,7 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
       }
     }
     break;
-
+    
     case VALUETYPE_INTEGER:
       if( bind->type && bind->type != DATA_NUM )
       {
@@ -967,7 +967,7 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
       bind->value = (int*)malloc(*(bind->len));
       *(int*)(bind->value) = v8val->ToInt32()->Value();
       break;
-
+    
     case VALUETYPE_UINTEGER:
       if( bind->type && bind->type != DATA_NUM )
       {
@@ -1016,7 +1016,7 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
     case VALUETYPE_OBJECT:
       {
         Local<Object> obj = v8val->ToObject();
-        if (Buffer::HasInstance(obj))
+        if (Buffer::HasInstance(obj)) 
         {
           size_t bufLen = Buffer::Length(obj);
           bind->type = dpi::DpiRaw;
@@ -1038,15 +1038,15 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
               memcpy(bind->value, Buffer::Data(obj), bufLen);
           }
         }
-        else
+        else 
         {
           executeBaton->error= NJSMessages::getErrorMsg(
                                              errInvalidBindDataType,2);
-          goto exitGetInBindParamsScalar;
+          goto exitGetInBindParamsScalar; 
         }
       }
       break;
-
+  
   default:
     executeBaton->error= NJSMessages::getErrorMsg(errInvalidBindDataType,2);
     goto exitGetInBindParamsScalar;
@@ -1054,7 +1054,7 @@ void Connection::GetInBindParamsScalar(Local<Value> v8val, Bind* bind,
   }
 
   executeBaton->binds.push_back(bind);
-
+  
 exitGetInBindParamsScalar:
   ;
 }
@@ -1078,9 +1078,9 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
   size_t           arrayElementSize = 0; // actual array element size
   size_t           bufferSize = 0;
   char*            buffer = 0;
-
+  
   //
-  //  Step 1 - Analyze the bind parameter to determine if we actually can
+  //  Step 1 - Analyze the bind parameter to determine if we actually can 
   //           bind the array of values
   //
 
@@ -1092,7 +1092,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
     bind->maxArraySize = static_cast<unsigned int>(bind->curArraySize);
   }
 
-  // Currently only STRING & NUMBER are supported for Array Bind(s)
+  // Currently only STRING & NUMBER are supported for Array Bind(s) 
   if ( (bind->type != DATA_STR) && (bind->type != DATA_NUM) )
   {
     executeBaton->error = NJSMessages::getErrorMsg(
@@ -1112,11 +1112,11 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
     {
       executeBaton->error = NJSMessages::getErrorMsg(
                                           errInvalidTypeForArrayBind);
-
+      
       goto exitGetInBindParamsArray;
     }
 
-    // make sure that all values in the array have the exact same type or are
+    // make sure that all values in the array have the exact same type or are 
     // null
     switch (bind->type)
     {
@@ -1151,7 +1151,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
   }
 
   //
-  //  Step 2 - Allocate the needed buffers for the arrays of values and the
+  //  Step 2 - Allocate the needed buffers for the arrays of values and the 
   //           indicators
   //
 
@@ -1182,8 +1182,8 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
         executeBaton->error = NJSMessages::getErrorMsg ( errResultsTooLarge );
         goto exitGetInBindParamsArray;
       }
-      bufferSize       = static_cast<size_t>(arrayElementSize *
-                                             bind->maxArraySize);
+      bufferSize       = static_cast<size_t>(arrayElementSize * 
+                                             bind->maxArraySize);      
       buffer           = reinterpret_cast<char*>(malloc(bufferSize));
       bind->value      = buffer;
       break;
@@ -1196,7 +1196,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
         executeBaton->error = NJSMessages::getErrorMsg ( errResultsTooLarge );
         goto exitGetInBindParamsArray;
       }
-      bufferSize       = static_cast<size_t>(arrayElementSize *
+      bufferSize       = static_cast<size_t>(arrayElementSize * 
                                              bind->maxArraySize);
       buffer           = reinterpret_cast<char*>(malloc(bufferSize));
       bind->value      = buffer;
@@ -1238,7 +1238,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
     executeBaton->error = NJSMessages::getErrorMsg ( errResultsTooLarge );
     goto exitGetInBindParamsArray;
   }
-
+                                  
   if (!bind->ind || !bind->len)
   {
     executeBaton->error = NJSMessages::getErrorMsg(errInsufficientMemory);
@@ -1251,7 +1251,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
   //
 
   for (unsigned int index = 0;
-       index < bind->curArraySize;
+       index < bind->curArraySize; 
        index++, buffer += arrayElementSize)
   {
     Local<Value> value = va8vals->Get(index);
@@ -1286,7 +1286,7 @@ void Connection::GetInBindParamsArray(Local<Array> va8vals, Bind *bind,
         break;
 
       default:
-        executeBaton->error = NJSMessages::getErrorMsg (
+        executeBaton->error = NJSMessages::getErrorMsg ( 
                                           errInvalidTypeForArrayBind ) ;
         goto exitGetInBindParamsArray;
         break;
@@ -1338,7 +1338,7 @@ bool Connection::AllocateBindArray(unsigned short dataType, Bind* bind,
     {
       *arrayElementSize = static_cast<size_t>(bind->maxSize);
     }
-
+  
     if ( NJS_SIZE_T_OVERFLOW (*arrayElementSize, bind->maxArraySize ) )
     {
       executeBaton->error = NJSMessages::getErrorMsg ( errResultsTooLarge );
@@ -1367,7 +1367,7 @@ bool Connection::AllocateBindArray(unsigned short dataType, Bind* bind,
     break;
 
   default:
-    executeBaton->error = NJSMessages::getErrorMsg (
+    executeBaton->error = NJSMessages::getErrorMsg ( 
                                     errInvalidTypeForArrayBind ) ;
     goto exitAllocateBindArray;
     break;
@@ -1441,17 +1441,17 @@ void Connection::Async_Execute (uv_work_t *req)
     {
       for ( unsigned int b = 0; b < executeBaton->binds.size () ; b ++ )
       {
-        if ( executeBaton->binds[b]->isOut &&
+        if ( executeBaton->binds[b]->isOut && 
              executeBaton->binds[b]->type == dpi::DpiRaw )
         {
-          executeBaton->error = NJSMessages::getErrorMsg (
+          executeBaton->error = NJSMessages::getErrorMsg ( 
                                                   errBufferReturningInvalid );
           goto exitAsyncExecute;
-
+          
         }
       }
     }
-
+      
 
     if (executeBaton->st == DpiStmtSelect)
     {
@@ -1461,23 +1461,23 @@ void Connection::Async_Execute (uv_work_t *req)
         // prefetchRows either default or value provided by user
         executeBaton->dpistmt->prefetchRows(executeBaton->prefetchRows);
       }
-      else
+      else 
       {
         // OCI default prefetchRows value is 1.
-        // Set default prefetchRows to 2 to cut down on additional
+        // Set default prefetchRows to 2 to cut down on additional 
         // fetch round-trip for single row non-resultset cases
         executeBaton->dpistmt->prefetchRows(NJS_PREFETCH_NON_RESULTSET);
-      }
+      }      
 
       executeBaton->dpistmt->execute(0, executeBaton->autoCommit);
       const dpi::MetaData* meta   = executeBaton->dpistmt->getMetaData();
       executeBaton->numCols       = executeBaton->dpistmt->numCols();
       executeBaton->columnNames   = new std::string[executeBaton->numCols];
-      executeBaton->columnTypes   = new std::string[executeBaton->numCols];
-      Connection::CopyMetaData( executeBaton->columnNames, executeBaton->columnTypes, meta,
-                                executeBaton->numCols );
+      executeBaton->fields        = new FieldInfo[executeBaton->numCols];
+      Connection::CopyMetaData( executeBaton->columnNames, executeBaton->fields,
+                                meta, executeBaton->numCols);
 
-      if ( executeBaton->getRS )
+      if ( executeBaton->getRS ) 
         goto exitAsyncExecute;
 
       Connection::DoDefines(executeBaton, meta, executeBaton->numCols);
@@ -1578,7 +1578,7 @@ void Connection::Async_Execute (uv_work_t *req)
          if ( state == DPI_STMT_STATE_EXECUTED )
          {
            // set the prefetch on the valid cursor object
-           ((dpi::Stmt *)(bind->value))->prefetchRows (
+           ((dpi::Stmt *)(bind->value))->prefetchRows ( 
                                               executeBaton->prefetchRows ) ;
          }
          else
@@ -1676,7 +1676,7 @@ void Connection::PrepareAndBind (eBaton* executeBaton)
         // Convert v8::Date to Oracle DB Type for IN and IN/OUT binds
         if ( executeBaton->binds[index]->type == DpiTimestampLTZ &&
             // InOut bind
-            (executeBaton->binds[index]->isInOut ||
+            (executeBaton->binds[index]->isInOut || 
             // In bind
             (!executeBaton->binds[index]->isOut &&
              !executeBaton->binds[index]->isInOut)))
@@ -1740,7 +1740,7 @@ void Connection::PrepareAndBind (eBaton* executeBaton)
               index+1,executeBaton->binds[index]->type,
               executeBaton->binds[index]->value,
               (executeBaton->stmtIsReturning &&
-                executeBaton->binds[index]->isOut &&
+                executeBaton->binds[index]->isOut && 
                (executeBaton->binds[index]->type == dpi::DpiVarChar )) ?
                 (executeBaton->binds[index]->maxSize + 1) :
                  executeBaton->binds[index]->maxSize,
@@ -1761,15 +1761,7 @@ void Connection::PrepareAndBind (eBaton* executeBaton)
   }
 }
 
-/*****************************************************************************/
-/*
-   DESCRIPTION
-     To simple data type description.
-
-   PARAMETERS:
-     dbType - Dpi enumeration of database type
- */
-std::string Connection::SourceDBType2String( unsigned dbType )
+std::string Connection::SourceDBType2JSString( unsigned dbType )
 {
   switch ( dbType )
   {
@@ -1777,14 +1769,12 @@ std::string Connection::SourceDBType2String( unsigned dbType )
   case dpi::DpiBinaryFloat:
   case dpi::DpiBinaryDouble:
   case dpi::DpiDouble:
-    return "numeric";
-
   case dpi::DpiInteger:
   case dpi::DpiUnsignedInteger:
   case dpi::DpiRowid:
   case dpi::DpiYearMonth:
   case dpi::DpiDaySecond:
-    return "integer";
+    return "number";
 
   case dpi::DpiVarChar:
   case dpi::DpiFixedChar:
@@ -1794,6 +1784,7 @@ std::string Connection::SourceDBType2String( unsigned dbType )
 
   case dpi::DpiDate:
   case dpi::DpiTimestamp:
+  case dpi::DpiTimestampTZ:
   case dpi::DpiTimestampLTZ:
     return "date";
   }
@@ -1801,24 +1792,68 @@ std::string Connection::SourceDBType2String( unsigned dbType )
   return "object";
 }
 
+std::string Connection::SourceDBType2String( unsigned dbType ) {
+  switch ( dbType ) {
+    case DpiVarChar: return "varchar";
+    case DpiNumber: return "number";
+    case DpiInteger: return "integer";
+    case DpiDouble: return "double";
+    case DpiString: return "string";
+    case DpiLong: return "long";
+    case DpiDate: return "date";
+    case DpiRaw: return "raw";
+    case DpiLongRaw: return "longraw";
+    case DpiUnsignedInteger: return "unsignedinteger";
+    case DpiRowid: return "rowid";
+    case DpiFixedChar: return "fixedchar";
+    case DpiBinaryFloat: return "binaryfloat";
+    case DpiBinaryDouble: return "binarydouble";
+    case DpiUDT: return "udt";
+    case DpiRef: return "ref";
+    case DpiClob: return "clob";
+    case DpiBlob: return "blob";
+    case DpiBfile: return "bfile";
+    case DpiRSet: return "rset";
+    case DpiYearMonth: return "yearmonth";
+    case DpiDaySecond: return "daysecond";
+    case DpiTimestamp: return "timestamp";
+    case DpiTimestampTZ: return "timestamptz";
+    case DpiURowid: return "urowid";
+    case DpiTimestampLTZ: return "timestampltz";
+    case DpiTypeBase: return "typebase";
+    case DpiDateTimeArray: return "datetimearray";
+    case DpiIntervalArray: return "intervalarray";
+  }
+  return "undefined";
+}
 
 /*****************************************************************************/
 /*
    DESCRIPTION
-     copy column names from meta data to the string array passed as parameter.
+     copy column properties from meta data to the string array (names) and
+     info class list (FieldInfo) passed as parameters.
 
    PARAMETERS:
-     string array  -  column names
-     metaData      -  metaData info from DPI
-     numCols       -  number of columns
+     string array   -  column names
+     fieldInfo list -  field metadata list
+     metaData       -  metaData info from DPI
+     numCols        -  number of columns
  */
-void Connection::CopyMetaData ( std::string* names, std::string* types, const dpi::MetaData* meta,
-                                unsigned int numCols )
+void Connection::CopyMetaData ( std::string* names,
+                                FieldInfo* fields,
+                                const dpi::MetaData* meta,
+                                unsigned int numCols)
 {
-  for (unsigned int col = 0; col < numCols; col++)
-  {
+  for (unsigned int col = 0; col < numCols; col++) {
     names[col] = std::string( (const char*)meta[col].colName, meta[col].colNameLen );
-    types[col] = std::string( Connection::SourceDBType2String(meta[col].dbType) );
+
+    fields[col].name = std::string( (const char*)meta[col].colName, meta[col].colNameLen );
+    fields[col].type = std::string( Connection::SourceDBType2JSString(meta[col].dbType) );
+    fields[col].originalType = std::string( Connection::SourceDBType2String(meta[col].dbType) );
+    fields[col].size = meta[col].dbSize;
+    fields[col].precision = meta[col].precision;
+    fields[col].scale = (unsigned int)meta[col].scale;
+    fields[col].isNullable = meta[col].isNullable;
   }
 }
 
@@ -1829,7 +1864,7 @@ void Connection::CopyMetaData ( std::string* names, std::string* types, const dp
 
   PARAMETERS
     dbType - Dpi enumeration of database type
-
+    
   RETURNS
   targetDB type (DPI enumeration)
 */
@@ -1873,7 +1908,7 @@ unsigned short Connection::SourceDBType2TargetDBType ( unsigned dbType )
     name                  name of the column
     targetType[IN/OUT]  - db type [IN}, and fetchType [OUT] if a rules was
                           applied
-
+    
   RETURNS
     true if rules applied and
     false if no matching column name available.
@@ -1948,7 +1983,7 @@ boolean Connection::MapByType ( eBaton *executeBaton, unsigned short &dbType )
       {
         if ( executeBaton->fetchAsStringTypes[t] == DATA_NUM )
         {
-          /*
+          /* 
            * Convert all Numeric values to STRING
            */
           dbType = dpi::DpiVarChar;
@@ -1979,7 +2014,7 @@ boolean Connection::MapByType ( eBaton *executeBaton, unsigned short &dbType )
       break;
     }
   }
-
+  
   return dbType;
 }
 
@@ -2015,7 +2050,7 @@ unsigned short Connection::GetTargetType ( eBaton *executeBaton,
   {
     if ( !Connection::MapByName ( executeBaton, name, dbType ) )
     {
-      /* If no specification by-column-name provided, then check
+      /* If no specification by-column-name provided, then check 
        * the by-type specification.
        * By-name overrides the by-type specification, and so if by-name found
        * no need to check for by-type specifications.
@@ -2068,7 +2103,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
         /* For VARCHAR2 type, make sure sufficient buffer is available */
         defines[col].maxSize = ( defines[col].fetchType == dpi::DpiVarChar) ?
                                NJS_MAX_FETCH_AS_STRING_SIZE : sizeof (double);
-
+        
         if ( NJS_SIZE_T_OVERFLOW ( defines[col].maxSize,
                                        executeBaton->maxRows ) )
         {
@@ -2079,10 +2114,10 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
         {
           defines[col].buf = (double *)malloc( (size_t)defines[col].maxSize*
                                                executeBaton->maxRows );
-
+ 
           if( !defines[col].buf )
           {
-            executeBaton->error = NJSMessages::getErrorMsg(
+            executeBaton->error = NJSMessages::getErrorMsg( 
                                     errInsufficientMemory );
             return;
           }
@@ -2107,7 +2142,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
            * malloc(0) behaves diffrently on different platforms, so avoiding it
            */
           defines[col].maxSize   = (meta[col].dbSize) * csratio;
-
+  
           if ( NJS_SIZE_T_OVERFLOW ( defines[col].maxSize,
                                          executeBaton->maxRows ) )
           {
@@ -2121,7 +2156,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
                                                executeBaton->maxRows );
             if( !defines[col].buf )
             {
-              executeBaton->error = NJSMessages::getErrorMsg(
+              executeBaton->error = NJSMessages::getErrorMsg( 
                                       errInsufficientMemory );
               return;
             }
@@ -2136,17 +2171,17 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
       case dpi::DpiTimestampTZ:
       case dpi::DpiTimestampLTZ:
         defines[col].fetchType = Connection::GetTargetType ( executeBaton,
-                                               executeBaton->columnNames[col],
+                                               executeBaton->columnNames[col], 
                                                dpi::DpiTimestampLTZ );
 
-        if ( ( meta[col].dbType == dpi::DpiTimestampTZ ) &&
+        if ( ( meta[col].dbType == dpi::DpiTimestampTZ ) && 
              ( defines[col].fetchType != dpi::DpiVarChar ))
         {
-          /*
+          /* 
            * TIMESTAMP WITH TIMEZONE (TZ) column type supported only as
            * STRING value.
            */
-          executeBaton->error = NJSMessages::getErrorMsg (
+          executeBaton->error = NJSMessages::getErrorMsg ( 
                                              errUnsupportedDatType ) ;
           return;
         }
@@ -2200,7 +2235,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
                                           (size_t) executeBaton->maxRows) ;
         if ( !defines[col].buf )
         {
-          executeBaton->error = NJSMessages::getErrorMsg (
+          executeBaton->error = NJSMessages::getErrorMsg ( 
                                          errInsufficientMemory );
           return;
         }
@@ -2232,7 +2267,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
 
         for (unsigned int j = 0; j < executeBaton->maxRows; j++)
         {
-          ((Descriptor **)(defines[col].buf))[j] =
+          ((Descriptor **)(defines[col].buf))[j] = 
             executeBaton->dpienv->allocDescriptor(LobDescriptorType);
         }
         break;
@@ -2274,7 +2309,7 @@ void Connection::DoDefines ( eBaton* executeBaton, const dpi::MetaData* meta,
         return;
         break;
     }
-
+     
     defines[col].ind = (short*)malloc (sizeof(short)*(executeBaton->maxRows));
     if(!defines[col].ind)
     {
@@ -2310,11 +2345,11 @@ void Connection::DoFetch (eBaton* executeBaton)
   executeBaton->dpistmt->fetch ( executeBaton->maxRows );
   executeBaton->rowsFetched = executeBaton->dpistmt->rowsFetched();
   Connection::Descr2Double ( executeBaton->defines,
-                             executeBaton->numCols,
+                             executeBaton->numCols, 
                              executeBaton->rowsFetched,
                              executeBaton->getRS );
-  Connection::Descr2protoILob ( executeBaton,
-                                executeBaton->numCols,
+  Connection::Descr2protoILob ( executeBaton, 
+                                executeBaton->numCols, 
                                 executeBaton->rowsFetched );
 }
 
@@ -2370,13 +2405,13 @@ void Connection::Descr2Double( Define* defines, unsigned int numCols,
      numCols       - # of columns
      rowsFetched   - rows fetched
  */
-void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
+void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols, 
                                   unsigned int rowsFetched )
 {
   Define *defines = executeBaton->defines;
   for (unsigned int col = 0; col < numCols; col ++ )
   {
-    if ((defines[col].fetchType == DpiClob) ||
+    if ((defines[col].fetchType == DpiClob) || 
         (defines[col].fetchType == DpiBlob) ||
         (defines[col].fetchType == DpiBfile))
     {
@@ -2392,11 +2427,11 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
             // Hence, setting the Lob Descriptor in the define buffer to NULL.
 
         ((Descriptor **)(defines[col].buf))[row] = NULL;
-
-
+        
+        
         ProtoILob *protoILob = new ProtoILob(executeBaton, lobLocator,
                                              defines[col].fetchType);
-
+ 
         if (!executeBaton->error.empty())
         {
               // we need to delete all ProtoLobs that have been created so far
@@ -2412,12 +2447,12 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
             {
               for (unsigned int j = 0; j <  executeBaton->rowsFetched; j++)
               {
-                // Skip this block for null values.  The null wasn't
+                // Skip this block for null values.  The null wasn't 
                 // converted to a protoILob. The define buffer still
                 // points to a descriptor which can be properly
                 // freed when the executeBaton is destroyed.
                 if ( (defines[i].ind)[j] != -1 )
-                {
+                {  
                   protoILob = static_cast<ProtoILob **>(defines[i].buf)[j];
                   delete protoILob;
                   ((Descriptor **)(defines[i].buf))[j] = NULL;
@@ -2425,7 +2460,7 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
               }
             }
           }
-
+          
               // now delete ProtoLob in the current column we were working up
               // to row that gave the error. We know that this is a Lob column
               // as the error happenned here.
@@ -2434,7 +2469,7 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
           {
             // As before, skip this block for null values
             if ( (defines[col].ind)[j] != -1 )
-            {
+            { 
               protoILob = static_cast<ProtoILob **>(defines[col].buf)[j];
               delete protoILob;
               ((Descriptor **)(defines[col].buf))[j] = NULL;
@@ -2448,7 +2483,7 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
             // The defines buf contained a Descriptor i.e. a pointer.  We are
             // replacing that pointer by a pointer to a ProtoILob.
 
-        ((Descriptor **)(defines[col].buf))[row] =
+        ((Descriptor **)(defines[col].buf))[row] = 
           reinterpret_cast<Descriptor *>(protoILob);
       }
     }
@@ -2461,7 +2496,7 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
   {
     Bind *bind = executeBaton->binds[obndpos];
 
-    if ((!bind->isOut && !bind->isInOut) ||
+    if ((!bind->isOut && !bind->isInOut) || 
         ( bind->ind && *(sb2 *)bind->ind == -1))
       continue;  // we only need to process the non-null OUT binds
 
@@ -2469,20 +2504,20 @@ void Connection::Descr2protoILob( eBaton *executeBaton, unsigned int numCols,
     {
       // TODO: Update this loop when support for array binds is added.
       // For UPDATE, loop through all the rows returned for each bind
-      // For INSERT, eventually we will consider the iters.
+      // For INSERT, eventually we will consider the iters.  
       //             For now only 1 row will be inserted.
       for (unsigned int rowidx = 0; rowidx < bind->rowsReturned; rowidx++)
       {
-        Descriptor *lobLocator =
+        Descriptor *lobLocator = 
           (Descriptor *)((Descriptor **)bind->value)[rowidx];
-        ProtoILob *protoILob = new ProtoILob(executeBaton, lobLocator,
+        ProtoILob *protoILob = new ProtoILob(executeBaton, lobLocator, 
                                              bind->type);
-
-        ((Descriptor **)(bind->value))[rowidx] =
+        
+        ((Descriptor **)(bind->value))[rowidx] = 
           reinterpret_cast<Descriptor *>(protoILob);
       }
     }
-  }
+  }     
 }
 
 /*****************************************************************************/
@@ -2544,9 +2579,7 @@ void Connection::Async_AfterExecute(uv_work_t *req)
         Nan::Set(result, Nan::New<v8::String>("outBinds").ToLocalChecked(),Nan::Undefined());
         Nan::Set(result, Nan::New<v8::String>("rowsAffected").ToLocalChecked(), Nan::Undefined());
         Nan::Set(result, Nan::New<v8::String>("metaData").ToLocalChecked(), Connection::GetMetaData(
-                                                    executeBaton->columnNames,
-                                                    executeBaton->columnTypes,
-                                                    executeBaton->numCols));
+                                                    executeBaton->fields, executeBaton->numCols));
         break;
       case DpiStmtBegin :
       case DpiStmtDeclare :
@@ -2595,21 +2628,35 @@ exitAsyncAfterExecute:
    RETURNS:
      MetaData Handle
 */
-v8::Local<v8::Value> Connection::GetMetaData (std::string* columnNames,
-                                       std::string* columnTypes,
-                                       unsigned int numCols )
+v8::Local<v8::Value> Connection::GetMetaData (FieldInfo* fields, unsigned int numCols)
 {
   Nan::EscapableHandleScope scope;
   Local<Array> metaArray = Nan::New<v8::Array>(numCols);
-  for(unsigned int i=0; i < numCols ; i++)
-  {
+
+  for(unsigned int i=0; i < numCols ; i++) {
     Local<Object> column = Nan::New<v8::Object>();
     Nan::Set(column, Nan::New<v8::String>("name").ToLocalChecked(),
-                Nan::New<v8::String>(columnNames[i].c_str()).ToLocalChecked()
+                Nan::New<v8::String>(fields[i].name).ToLocalChecked()
                 );
     Nan::Set(column, Nan::New<v8::String>("type").ToLocalChecked(),
-                Nan::New<v8::String>(columnTypes[i].c_str()).ToLocalChecked()
+                Nan::New<v8::String>(fields[i].type).ToLocalChecked()
                 );
+    Nan::Set(column, Nan::New<v8::String>("originalType").ToLocalChecked(),
+                Nan::New<v8::String>(fields[i].originalType).ToLocalChecked()
+                );
+    Nan::Set(column, Nan::New<v8::String>("size").ToLocalChecked(),
+                Nan::New<v8::Number>(fields[i].size)
+                );
+    Nan::Set(column, Nan::New<v8::String>("precision").ToLocalChecked(),
+                Nan::New<v8::Number>(fields[i].precision)
+                );
+    Nan::Set(column, Nan::New<v8::String>("scale").ToLocalChecked(),
+                Nan::New<v8::Number>(fields[i].scale)
+                );
+    Nan::Set(column, Nan::New<v8::String>("isNullable").ToLocalChecked(),
+                Nan::New<v8::Boolean>(fields[i].isNullable)
+                );
+
     Nan::Set(metaArray, i, column);
   }
   return scope.Escape(metaArray);
@@ -2661,7 +2708,7 @@ v8::Local<v8::Value> Connection::GetRows (eBaton* executeBaton)
       }
       break;
     default :
-      executeBaton->error = NJSMessages::getErrorMsg(errInvalidPropertyValue,
+      executeBaton->error = NJSMessages::getErrorMsg(errInvalidPropertyValue, 
                                                      "outFormat");
       goto exitGetRows;
       break;
@@ -2681,7 +2728,7 @@ v8::Local<v8::Value> Connection::GetRows (eBaton* executeBaton)
                     false if bind struct is to be processed
      index        - column index in define array /
                     index in binds vector
-     row          - row index in define->buf /
+     row          - row index in define->buf / 
                     always 0 for bind->value
 
    RETURNS:
@@ -2704,8 +2751,8 @@ Local<Value> Connection::GetValue ( eBaton *executeBaton,
                            executeBaton,
                            define->ind[row],
                            define->fetchType,
-                           (define->fetchType == DpiTimestampLTZ ) ?
-                             (void *) &dblArr[row] :
+                           (define->fetchType == DpiTimestampLTZ ) ? 
+                             (void *) &dblArr[row] : 
                              (void *) ((char *)(define->buf) +
                               ( row * (define->maxSize ))),
                            define->len[row] );
@@ -2715,25 +2762,25 @@ Local<Value> Connection::GetValue ( eBaton *executeBaton,
   {
     // DML, PL/SQL execution
     Bind *bind = executeBaton->binds[col];
-
+    
     if(executeBaton->stmtIsReturning)
     {
       // SQL statement with RETURNING INTO clause, will return an array
       Local<Value> value = Connection::GetArrayValue (
                                         executeBaton,
-                                        executeBaton->binds[col],
+                                        executeBaton->binds[col], 
                          (unsigned long)executeBaton->rowsAffected );
       return scope.Escape(value);
     }
     else if ( bind->isArray )
     {
       // PL/SQL array bind
-      Local<Value> value = Connection::GetArrayValue(executeBaton,
-                                                     bind,
+      Local<Value> value = Connection::GetArrayValue(executeBaton, 
+                                                     bind, 
                             static_cast<unsigned long>(bind->curArraySize));
       return scope.Escape(value);
     }
-    else if(bind->type == DpiRSet)
+    else if(bind->type == DpiRSet) 
     {
       return scope.Escape ( Connection::GetValueRefCursor (
                                       executeBaton, bind ));
@@ -2770,7 +2817,7 @@ Local<Value> Connection::GetValue ( eBaton *executeBaton,
    RETURNS:
      Handle
 */
-Local<Value> Connection::GetValueRefCursor ( eBaton *executeBaton,
+Local<Value> Connection::GetValueRefCursor ( eBaton *executeBaton, 
                                               Bind *bind )
 {
   Nan::EscapableHandleScope scope;
@@ -2781,7 +2828,7 @@ Local<Value> Connection::GetValueRefCursor ( eBaton *executeBaton,
   {
     resultSet = Nan::New<FunctionTemplate>(ResultSet::resultSetTemplate_s)->
                             GetFunction() ->NewInstance();
-    /*
+    /* 
      * IN case of REFCURSOR, bind->flags will indicate whether we got
      * a valid handle, based on that numCols, metaData are queried.
      */
@@ -2809,7 +2856,7 @@ Local<Value> Connection::GetValueRefCursor ( eBaton *executeBaton,
    RETURNS:
      Handle
 */
-Local<Value> Connection::GetValueLob ( eBaton *executeBaton,
+Local<Value> Connection::GetValueLob ( eBaton *executeBaton, 
                                         Bind *bind )
 {
   Nan::EscapableHandleScope scope;
@@ -2848,7 +2895,7 @@ Local<Value> Connection::GetValueLob ( eBaton *executeBaton,
      Handle
 */
 Local<Value> Connection::GetValueCommon ( eBaton *executeBaton,
-                                           short ind,
+                                           short ind, 
                                            unsigned short type,
                                            void* val, DPI_BUFLEN_TYPE len )
 {
@@ -2932,8 +2979,8 @@ v8::Local<v8::Value> Connection::GetArrayValue ( eBaton *executeBaton,
   for ( index = 0 ; index < count ; index ++ )
   {
     if(
-        binds->ind[index] == -1 &&
-        (
+        binds->ind[index] == -1 && 
+        ( 
           (binds->type == dpi::DpiVarChar) ||
           (binds->type == dpi::DpiInteger) ||
           (binds->type == dpi::DpiDouble) ||
@@ -2966,7 +3013,7 @@ v8::Local<v8::Value> Connection::GetArrayValue ( eBaton *executeBaton,
                     Nan::New<v8::Number> ( *((double *)binds->value + index )));
       break;
     case dpi::DpiTimestampLTZ:
-        Nan::Set(arrVal, index,
+        Nan::Set(arrVal, index, 
                       Nan::New<v8::Date> (*((long double *)binds->extvalue + index )).ToLocalChecked() );
       break;
     case dpi::DpiClob:
@@ -2979,7 +3026,7 @@ v8::Local<v8::Value> Connection::GetArrayValue ( eBaton *executeBaton,
       *(ProtoILob **)binds->value = NULL;
     }
     break;
-
+                    
     default:
       break;
     }
@@ -3044,7 +3091,7 @@ v8::Local<v8::Value> Connection::GetOutBindArray ( eBaton *executeBaton )
     if(binds[index]->isOut)
     {
       Local<Value> val ;
-      val = Connection::GetValue ( executeBaton, false, index );
+      val = Connection::GetValue ( executeBaton, false, index ); 
       Nan::Set(arrayBinds, it, val );
       it ++;
     }
@@ -3068,7 +3115,7 @@ v8::Local<v8::Value> Connection::GetOutBindObject ( eBaton *executeBaton )
   Nan::EscapableHandleScope scope;
   std::vector<Bind*>binds = executeBaton->binds;
   Local<Object> objectBinds = Nan::New<v8::Object>();
-
+  
   for(unsigned int index = 0; index < binds.size(); index++)
   {
     if(binds[index]->isOut)
@@ -3220,7 +3267,7 @@ void Connection::Async_Release(uv_work_t *req)
 void Connection::Async_AfterRelease(uv_work_t *req)
 {
   Nan::HandleScope scope;
-
+  
   eBaton *releaseBaton = (eBaton*)req->data;
   Nan::TryCatch tc;
 
@@ -3234,7 +3281,7 @@ void Connection::Async_AfterRelease(uv_work_t *req)
   delete releaseBaton;
   Nan::MakeCallback( Nan::GetCurrentContext()->Global(),
                       callback, 1, argv );
-
+  
   if(tc.HasCaught())
   {
     Nan::FatalException(tc);
@@ -3544,7 +3591,7 @@ void Connection::Async_AfterBreak (uv_work_t *req)
   Nan::TryCatch tc;
   Local<Value> argv[1];
 
-  if(!(breakBaton->error).empty())
+  if(!(breakBaton->error).empty()) 
     argv[0] = v8::Exception::Error(Nan::New<v8::String>((breakBaton->error).c_str()).ToLocalChecked());
   else
     argv[0] = Nan::Undefined();
@@ -3628,7 +3675,7 @@ void Connection::UpdateDateValue ( eBaton * ebaton, unsigned int index )
     callback/Utility function to allocate for BIND values (IN & OUT).
     This has been consolidated to a callback/utility funciton so that
     allocation happens only once.
-    For IN binds, the allocation and initialization happens in
+    For IN binds, the allocation and initialization happens in 
     GetInBindParams()
     For OUT binds the allocation happens in PrepareAndBind ().
     For OUT binds using RETURNING INTO clause, this function is used as
@@ -3641,7 +3688,7 @@ void Connection::UpdateDateValue ( eBaton * ebaton, unsigned int index )
   RETURNS
     -None-
 */
-void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
+void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning, 
                                        unsigned int nRows,
                                        unsigned int bndpos)
 {
@@ -3651,13 +3698,13 @@ void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
   if ( bind->isArray )
   {
     size_t arrayElementSize = (size_t) bind->maxSize;
-
+    
     Connection::AllocateBindArray ( bind->type, bind, executeBaton,
                                     &arrayElementSize );
     return;
   }
-
-
+  
+    
   if ( NJS_SIZE_T_OVERFLOW ( sizeof ( short ), nRows ) )
   {
     executeBaton->error = NJSMessages::getErrorMsg( errResultsTooLarge );
@@ -3691,7 +3738,7 @@ void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
   }
   else
   {
-    bind->len = (DPI_BUFLEN_TYPE *)malloc ( nRows *
+    bind->len = (DPI_BUFLEN_TYPE *)malloc ( nRows * 
                                             sizeof ( DPI_BUFLEN_TYPE ) );
   }
 
@@ -3795,7 +3842,7 @@ void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
   case dpi::DpiClob:
   case dpi::DpiBlob:
     // needed to post-process DML RETURNING of LOBs
-    // rowsReturns for INSERT will be zero,
+    // rowsReturns for INSERT will be zero, 
     // but we still need to allocate one descriptor
     bind->rowsReturned = 1;
     // initialize indicator to null
@@ -3840,7 +3887,7 @@ void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
       }
       else
       {
-        bind->extvalue = (long double *) malloc ( sizeof ( long double ) *
+        bind->extvalue = (long double *) malloc ( sizeof ( long double ) * 
                                                   nRows );
         if( !bind->extvalue )
         {
@@ -3850,7 +3897,7 @@ void Connection::cbDynBufferAllocate ( void *ctx, bool dmlReturning,
         }
       }
       // needed to post-process DML RETURNING of TimestampLTZ
-      // rowsReturns for INSERT will be zero,
+      // rowsReturns for INSERT will be zero, 
       // but we still need to allocate one descriptor
       bind->rowsReturned = 1;
       if (nRows > 1)
@@ -3914,7 +3961,7 @@ int Connection::cbDynBufferGet ( void *ctx, DPI_SZ_TYPE nRows,
 {
   eBaton *executeBaton = (eBaton *)ctx;
   Bind *bind = (Bind *)executeBaton->binds[bndpos];
-
+  
   int ret = 0;
 
   if (*piecep == OCI_ONE_PIECE )
@@ -3966,7 +4013,7 @@ int Connection::cbDynBufferGet ( void *ctx, DPI_SZ_TYPE nRows,
 
       // The bind variable is a pointer to a LOB descriptor pointer
       bind->len2[index] = sizeof(Descriptor *);
-      // allocate the LOB descriptor
+      // allocate the LOB descriptor 
       // *bufpp = ((void **)bind->value)[index];
       // *bufpp = (void *)*(((Descriptor **)bind->value) + index);
       *bufpp = (void *)((Descriptor **)bind->value)[index];
@@ -4033,7 +4080,7 @@ v8::Local<v8::Value> Connection::NewLob(eBaton* executeBaton,
   Local<Value>   argv[1];
 
   Local<Object>  iLob = Nan::New<FunctionTemplate>(ILob::iLobTemplate_s)->GetFunction()->NewInstance();
-
+  
   // the ownership of all handles in the ProtoILob are transferred to ILob
   // here.  Any error in initialization of ILob will cleanup the OCI
   // handles in the ILob cleanup routine.
