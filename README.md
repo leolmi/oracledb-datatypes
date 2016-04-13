@@ -2,9 +2,9 @@
 
 ### waiting for fix [issue](https://github.com/oracle/node-oracledb/issues/358) and without any pretense of breaking the terms of the original license, you can use this procedure to perform tests ###
 
-copy all files (**.cpp**, **.h**) in folder (*overwriting the originals*):
+copy all files (**.cpp**, **.h**) in relative folder (*overwriting the originals*):
 ```sh
-../node_modules/oracledb/src/njs/src
+../node_modules/oracledb
 ```
 
 move on path:
@@ -22,8 +22,8 @@ $ node-gyp rebuild
 after changing the `metaData` array exposes items with more properties:
 
 - `name` : field name
-- `type` : field data type (JS datatype)
-- `originalType` : field data type (DB datatype)
+- `type` : field data type [String] (JS datatype)
+- `originalType` : field data type [Number] (DB datatype)
 - `size` : DB field size
 - `precision` : DB field precision
 - `scale` : DB field scale
